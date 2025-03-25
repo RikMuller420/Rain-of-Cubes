@@ -4,20 +4,20 @@ using UnityEngine.Pool;
 
 public class CubeGenerator : MonoBehaviour
 {
-	[SerializeField] private CubeCollisionDetector cubePrefab;
-	[SerializeField] private float cubeRate = 2f;
-	[SerializeField] private Vector3 createPosition;
+	[SerializeField] private FallingObject cubePrefab;
+	[SerializeField] private float createRate = 0.8f;
+	[SerializeField] private Vector3 createPosition = Vector3.zero;
 	[SerializeField] private float maxHorizontalOffset = 4f;
-	[SerializeField] private int _poolCapacity = 10;
-    [SerializeField] private int _poolMaxSize = 10;
+	[SerializeField] private int _poolCapacity = 20;
+    [SerializeField] private int _poolMaxSize = 20;
 
-    private ObjectPool<CubeCollisionDetector> _pool;
+    private ObjectPool<FallingObject> _pool;
 
 	private void Awake()
 	{
-		_pool = new ObjectPool<CubeCollisionDetector>(
-			createFunc: () => CreatePolledCube(),
-			actionOnGet: (cube) => SetCubeAtRainPis(cube),
+		_pool = new ObjectPool<FallingObject>(
+			createFunc: () => InstantiateCube(),
+			actionOnGet: (cube) => DropNewCube(cube),
 			actionOnRelease: (cube) => cube.gameObject.SetActive(false),
 			actionOnDestroy: (cube) => Destroy(cube),
 			collectionCheck: true,
@@ -31,16 +31,16 @@ public class CubeGenerator : MonoBehaviour
 		StartCoroutine(ActivateCube());
 	}
 
-	private CubeCollisionDetector CreatePolledCube()
+	private FallingObject InstantiateCube()
 	{
-		CubeCollisionDetector cube = Instantiate(cubePrefab);
+		FallingObject cube = Instantiate(cubePrefab);
         cube.gameObject.SetActive(false);
-		cube.InitSettings(DeactivateCube);
+		cube.SetDeactivateAction(ReleaseCube);
 
         return cube;
     }
 
-    private void SetCubeAtRainPis(CubeCollisionDetector cube)
+    private void DropNewCube(FallingObject cube)
 	{
 		Vector3 randomOffset = new Vector3(
 			Random.Range(-maxHorizontalOffset, maxHorizontalOffset),
@@ -55,7 +55,7 @@ public class CubeGenerator : MonoBehaviour
 
     private IEnumerator ActivateCube()
 	{
-		WaitForSeconds wait = new WaitForSeconds(cubeRate);
+		WaitForSeconds wait = new WaitForSeconds(createRate);
 
 		while (enabled)
 		{
@@ -64,7 +64,7 @@ public class CubeGenerator : MonoBehaviour
         }
 	}
 
-	private void DeactivateCube(CubeCollisionDetector cube)
+	private void ReleaseCube(FallingObject cube)
 	{
 		_pool.Release(cube);
     }

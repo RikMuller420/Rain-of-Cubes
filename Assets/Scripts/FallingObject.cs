@@ -1,18 +1,19 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(MeshRenderer))]
-public class CubeCollisionDetector : MonoBehaviour
+public class FallingObject : MonoBehaviour
 {
 	[SerializeField] private MeshRenderer _renderer;
 
     private Color _defaultColor = Color.white;
-    private UnityAction<CubeCollisionDetector> _deactivate;
     private bool _isFallen = false;
     private float _minLifeDuration = 2f;
     private float _maxLifeDuration = 5f;
+    private UnityAction<FallingObject> _deactivate;
 
-    public void InitSettings(UnityAction<CubeCollisionDetector> deactivate)
+    public void SetDeactivateAction(UnityAction<FallingObject> deactivate)
     {
         _deactivate = deactivate;
     }
@@ -33,11 +34,13 @@ public class CubeCollisionDetector : MonoBehaviour
 		_isFallen = true;
         _renderer.material.color = new Color(Random.value, Random.value, Random.value);
         float lifeDuration = Random.Range(_minLifeDuration, _maxLifeDuration);
-        Invoke(nameof(Deactivate), lifeDuration);
+        StartCoroutine(ActivateCube(lifeDuration));
     }
 
-    private void Deactivate()
+    private IEnumerator ActivateCube(float delay)
     {
+        yield return new WaitForSeconds(delay);
+
         _deactivate?.Invoke(this);
     }
 }
