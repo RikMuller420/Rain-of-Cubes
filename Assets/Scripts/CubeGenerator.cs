@@ -5,9 +5,9 @@ using UnityEngine.Pool;
 public class CubeGenerator : MonoBehaviour
 {
 	[SerializeField] private FallingObject cubePrefab;
-	[SerializeField] private float createRate = 0.8f;
+	[SerializeField, Min(0.1f)] private float createRate = 0.8f;
 	[SerializeField] private Vector3 createPosition = Vector3.zero;
-	[SerializeField] private float maxHorizontalOffset = 4f;
+	[SerializeField, Min(0)] private float maxHorizontalOffset = 4f;
 	[SerializeField] private int _poolCapacity = 20;
     [SerializeField] private int _poolMaxSize = 20;
 
@@ -67,5 +67,14 @@ public class CubeGenerator : MonoBehaviour
 	private void ReleaseCube(FallingObject cube)
 	{
 		_pool.Release(cube);
+    }
+
+    private void OnValidate()
+    {
+		if (_poolMaxSize < _poolCapacity)
+		{
+			_poolMaxSize = _poolCapacity;
+
+        }
     }
 }
