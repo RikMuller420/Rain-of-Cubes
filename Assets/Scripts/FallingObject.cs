@@ -1,25 +1,24 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(ColorChanger))]
 public class FallingObject : MonoBehaviour
 {
-	[SerializeField] private MeshRenderer _renderer;
-    [SerializeField] private Color _defaultColor = Color.white;
+    [SerializeField] private ColorChanger _colorChanger;
 
     private bool _isFallen = false;
     private float _minLifeDuration = 2f;
     private float _maxLifeDuration = 5f;
-    private System.Action _deactivateAction;
+    private System.Action _deactivateDelegate;
 
-    public void SetDeactivateAction(System.Action deactivate)
+    public void SetDeactivateAction(System.Action deactivateDelegate)
     {
-        _deactivateAction = deactivate;
+        _deactivateDelegate = deactivateDelegate;
     }
 
     public void ResetState()
     {
-        _renderer.material.color = _defaultColor;
+        _colorChanger.ResetColor();
         _isFallen = false;
     }
 
@@ -31,7 +30,7 @@ public class FallingObject : MonoBehaviour
         }
 
 		_isFallen = true;
-        _renderer.material.color = new Color(Random.value, Random.value, Random.value);
+        _colorChanger.SetRandomColor();
         float lifeDuration = Random.Range(_minLifeDuration, _maxLifeDuration);
         StartCoroutine(DeactivateCube(lifeDuration));
     }
@@ -40,6 +39,6 @@ public class FallingObject : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        _deactivateAction?.Invoke();
+        _deactivateDelegate?.Invoke();
     }
 }
