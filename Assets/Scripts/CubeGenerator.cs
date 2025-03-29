@@ -7,13 +7,21 @@ public class CubeGenerator : MonoBehaviour
 	[SerializeField] private FallingObject cubePrefab;
 	[SerializeField, Min(0.1f)] private float createRate = 0.8f;
 	[SerializeField] private Vector3 createPosition = Vector3.zero;
-	[SerializeField, Min(0)] private float maxHorizontalOffset = 4f;
+	[SerializeField, Min(0)] private float maxCreateHorizontalOffset = 4f;
 	[SerializeField] private int _poolCapacity = 20;
     [SerializeField] private int _poolMaxSize = 20;
 
     private ObjectPool<FallingObject> _pool;
 
-	private void Awake()
+    private void OnValidate()
+    {
+        if (_poolMaxSize < _poolCapacity)
+        {
+            _poolMaxSize = _poolCapacity;
+        }
+    }
+
+    private void Awake()
 	{
 		_pool = new ObjectPool<FallingObject>(
 			createFunc: () => InstantiateCube(),
@@ -28,14 +36,14 @@ public class CubeGenerator : MonoBehaviour
 
 	private void Start()
 	{
-		StartCoroutine(ActivateCube());
+        StartCoroutine(CreateCubesRepeating());
 	}
 
 	private FallingObject InstantiateCube()
 	{
 		FallingObject cube = Instantiate(cubePrefab);
         cube.gameObject.SetActive(false);
-		cube.SetDeactivateAction(ReleaseCube);
+		cube.SetDeactivateAction(() => _pool.Release(cube));
 
         return cube;
     }
@@ -43,9 +51,9 @@ public class CubeGenerator : MonoBehaviour
     private void DropNewCube(FallingObject cube)
 	{
 		Vector3 randomOffset = new Vector3(
-			Random.Range(-maxHorizontalOffset, maxHorizontalOffset),
+			Random.Range(-maxCreateHorizontalOffset, maxCreateHorizontalOffset),
 			0,
-            Random.Range(-maxHorizontalOffset, maxHorizontalOffset)
+            Random.Range(-maxCreateHorizontalOffset, maxCreateHorizontalOffset)
         );
 
         cube.transform.position = createPosition + randomOffset;
@@ -53,28 +61,15 @@ public class CubeGenerator : MonoBehaviour
         cube.gameObject.SetActive(true);
     }
 
-    private IEnumerator ActivateCube()
+    private IEnumerator CreateCubesRepeating()
 	{
 		WaitForSeconds wait = new WaitForSeconds(createRate);
 
 		while (enabled)
 		{
 			yield return wait;
+
 			_pool.Get();
         }
 	}
-
-	private void ReleaseCube(FallingObject cube)
-	{
-		_pool.Release(cube);
-    }
-
-    private void OnValidate()
-    {
-		if (_poolMaxSize < _poolCapacity)
-		{
-			_poolMaxSize = _poolCapacity;
-
-        }
-    }
 }

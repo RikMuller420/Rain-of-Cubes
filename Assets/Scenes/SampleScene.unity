@@ -151,7 +151,7 @@ MonoBehaviour:
   cubePrefab: {fileID: 3370943546895470172, guid: a7b8f49dedfd0ad46b4f4b87d60d2394, type: 3}
   createRate: 0.8
   createPosition: {x: 0, y: 5, z: 0}
-  maxHorizontalOffset: 8
+  maxCreateHorizontalOffset: 6
   _poolCapacity: 20
   _poolMaxSize: 20
 --- !u!4 &3010676
