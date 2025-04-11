@@ -15,4 +15,11 @@ public class ColorChanger : MonoBehaviour
     {
         _renderer.material.color = new Color(Random.value, Random.value, Random.value);
     }
+
+    public void SetColorAlpha(float alpha)
+    {
+        Color color = _renderer.material.color;
+        color.a = alpha;
+        _renderer.material.color = color;
+    }
 }
