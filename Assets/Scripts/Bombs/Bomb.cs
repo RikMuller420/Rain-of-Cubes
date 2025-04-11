@@ -4,8 +4,6 @@ using UnityEngine;
 [RequireComponent(typeof(ColorChanger))]
 public class Bomb : PoolableObject
 {
-    private const int MaxExplodeObjects = 25;
-
     [SerializeField] private ColorChanger _colorChanger;
     [SerializeField] private float _explosionRadius = 20f;
     [SerializeField] private float _explosionForce = 300f;
@@ -14,14 +12,19 @@ public class Bomb : PoolableObject
 
     private float _time;
     private WaitForEndOfFrame _wait;
-    private Collider[] hitColliders = new Collider[MaxExplodeObjects];
+    private Exploder _exploder;
+
+    private void Awake()
+    {
+        _exploder = new Exploder(_explosionRadius, _explosionForce);
+    }
 
     public override void ResetState()
     {
         _colorChanger.ResetColor();
     }
 
-    public void Arm()
+    public void StartExplodeTimer()
     {
         float lifeDuration = Random.Range(_minLifeDuration, _maxLifeDuration);
         StartCoroutine(Explode(lifeDuration));
@@ -40,21 +43,7 @@ public class Bomb : PoolableObject
             yield return _wait;
         }
 
-        Explode();
-    }
-
-    private void Explode()
-    {
-        int hits = Physics.OverlapSphereNonAlloc(transform.position, _explosionRadius, hitColliders);
-
-        for (int i = 0; i < hits; i++)
-        {
-            if (hitColliders[i].TryGetComponent(out Rigidbody rigidbody))
-            {
-                rigidbody.AddExplosionForce(_explosionForce, transform.position, _explosionRadius);
-            }
-        }
-
+        _exploder.Explode(transform.position);
         OnDeactivated();
     }
 }

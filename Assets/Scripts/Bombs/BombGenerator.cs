@@ -25,6 +25,6 @@ public class BombGenerator : ObjectGenerator<Bomb>
 
         Bomb bomb = Pool.Get();
         bomb.transform.position = cube.transform.position;
-        bomb.Arm();
+        bomb.StartExplodeTimer();
     }
 }
