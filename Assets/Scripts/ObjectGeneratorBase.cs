@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public abstract class ObjectGeneratorStatistic : MonoBehaviour
+public abstract class ObjectGeneratorBase : MonoBehaviour
 {
     private WaitForEndOfFrame _wait = new WaitForEndOfFrame();
 
@@ -18,6 +18,7 @@ public abstract class ObjectGeneratorStatistic : MonoBehaviour
     protected void OnObjectDropped()
     {
         StartCoroutine(InvokeNextFrame(ObjectDropped));
+        OnActiveObjectCountChanged();
     }
 
     protected void OnObjectInstantiated()

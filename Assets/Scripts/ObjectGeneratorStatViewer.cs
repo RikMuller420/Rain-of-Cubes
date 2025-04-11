@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ObjectGeneratorStatViewer : MonoBehaviour
 {
-    [SerializeField] private ObjectGeneratorStatistic _objectGenerator;
+    [SerializeField] private ObjectGeneratorBase _objectGenerator;
     [SerializeField] private TextMeshProUGUI _droppedCountText;
     [SerializeField] private TextMeshProUGUI _instantiateCountText;
     [SerializeField] private TextMeshProUGUI _activeCountText;

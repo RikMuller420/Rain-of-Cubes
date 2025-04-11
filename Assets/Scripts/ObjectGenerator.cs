@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class ObjectGenerator<T> : ObjectGeneratorStatistic where T : PoolableObject
+public class ObjectGenerator<T> : ObjectGeneratorBase where T : PoolableObject
 {
     protected ObjectPool<T> Pool;
 
@@ -32,7 +32,6 @@ public class ObjectGenerator<T> : ObjectGeneratorStatistic where T : PoolableObj
         instance.gameObject.SetActive(true);
         DroppedCount++;
         OnObjectDropped();
-        OnActiveObjectCountChanged();
     }
 
     private T InstantiatePrefab()

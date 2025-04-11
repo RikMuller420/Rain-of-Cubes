@@ -17,7 +17,6 @@ public class BombGenerator : ObjectGenerator<Bomb>
     private void AssignDropBombDelegate(PoolableObject cube)
     {
         cube.Deactivated += DropBomb;
-        //cube.SetDeactivateInPositionDelegate(DropBomb);
     }
 
     public void DropBomb(PoolableObject cube)
